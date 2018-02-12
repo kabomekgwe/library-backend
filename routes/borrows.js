@@ -1,44 +1,35 @@
 const express = require('express');
 const router = express.Router();
 
-
+const Connection = require('../db');
 router
-    .get('/', (req, res, next) => {
-        Book.find({})
-            .select('title description _id')
-            .then(books => {
-                res.status(200).json(books);
+    
+    .post('/', (req, res, next) => {
+            const book = {
+                bookdid: req.body.bookid ,
+                userid: +req.body.userid,
+              
+            };
+
+            Connection.query('INSERT INTO borrows(userid, bookid) VALUES(?,?)', [ req.body.userid, req.body.bookid], (err, results, fields) =>{
+                if(err) throw err.message;
+
+                res.status(200);
             })
-            .catch(err => {
-                next(err)
-            })
+            //console.log(book)
+        });
+
+router  
+    .get('/:userid', (req, res, next) => {
+       
+    Connection.query('select books.title, books.subtitle, books.author from borrows ' + 
+      '  inner join books on books.id = borrows.bookid  ' +
+      '  JOIN  users on users.id = ? where borrows.returned = "No" '
+    ,[req.params.userid], (err, results, fields) => {
+        if(err) throw err.message;
+        res.status(200).json(results)
     })
-    // .post('/', (req, res, next) => {
-    //     res.status(200).json({
-    //         message: 'works'
-    //     })
-    // });
-
-router
-    .get('/:id', (req, res, next) => {
-        const id = req.params.id;
-
-        Book.findById(id)
-         .exec()
-         .then(data => {
-             console.log(data);
-             res.status(200).json(data);
-         })
-         
+       
     })
-    // .post('/:id', (req, res, next) => {
-
-    // })
-    // .delete('/:id', (req, res, next) => {
-
-    // })
-    // .put('/:id', (req, res, next) => {
-
-    // });
-
+ 
 module.exports = router;

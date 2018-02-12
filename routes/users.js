@@ -6,7 +6,20 @@ const jwt = require('jsonwebtoken');
 const lodash = require('lodash');
 const config = require('../config');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const passportJWT = require('passport-jwt');
+const JwtStrategy = passportJWT.Strategy;
+const ExtractJwt = passportJWT.ExtractJwt;
+const dotenv =require('dotenv');
+
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: process.env.SECRET_OR_KEY
+};
+
+const Strategy = new JwtStrategy(opts, (payload, next) => {
+    const user = null;
+    next(null, user);
+})
 
 const { body,check , validationResult } = require('express-validator/check');
 const { matchedData, sanitize } = require('express-validator/filter');
@@ -33,8 +46,7 @@ router.post('/login', (req, res, next) => {
             if (results.length > 0) {
                 const k = bcrypt.compareSync(password, results[0].password);
                 if (k) {
-                    const token = jwt.sign({ id: results[0].id, name: results[0].name }, secretKey, { expiresIn: '24h' });
-                    res.status(200).json(token);
+                    res.status(200).json({id: results[0].id, name: results[0].name});
                 }
             } else
                 res.status(400).json('Username password combination incorrect');
@@ -51,9 +63,6 @@ router.post('/register',
     if (!req.body.name || !req.body.password || !req.body.email || !req.body.surname) {
         return res.status(400).send("You must send the username and the password");
     }
-    
-      
-
     getUserDB(req.body.email, (user) => {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
             if (!user) {
@@ -63,45 +72,16 @@ router.post('/register',
                     email: req.body.email,
                     password: hash
                 };
-
                 Connection.query('INSERT INTO users (name,surname,email,password)  values(?,?,?,?) ;'
                     , [user.name, user.surname, user.email, user.password], (err, results, fields) => {
-                        // res.status(201).send({
-                        //     createToken: createToken(user)
-                        // })
-                        const token = jwt.sign({ userId: results.insertId }, secretKey, { expiresIn: '24h' });
-                        res.status(201).json(
-                            { token: token,
-                              user : {
-                                  name: user.name
-                              }});
+                        res.status(200).json({ id: results.insertId, user: user.name});
                     });
 
             } else {
                 res.status(400).json('A user with that email already exists');
             }
-
         })
     })
-
-
 });
 
 module.exports = router;
-
-
-  // Connection.query('INSERT INTO users (name,surname,email,password)  values(?,?,?,?) ;'
-            // ,[user.name,user.surname,user.email,user.password], (err, results, fields) => {
-            //     jwt.sign({user}, 'mykeyiskabo', (error, token) => {
-            //         res.status(200).json( {token});
-            //     })
-
-
-                //next();
-           // });
-
-        //    if (true) {
-        //     const token = jwt.sign({ id: results[0].id,name: results[0].name }, secretKey, { expiresIn: '24h' });
-        //     res.status(200).json(token);
-        // }else 
-        //     res.status(400).json('Username password combination incorrect');

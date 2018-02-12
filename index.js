@@ -1,7 +1,7 @@
 const express = require('express'),
       bodyParser = require('body-parser'),
       cors  =   require('cors'),
-      
+      dotenv    = require('dotenv');
       morgan = require('morgan');
       const expressValidator = require('express-validator');
       
@@ -9,7 +9,7 @@ const express = require('express'),
 
 //instantiation
 const app = express();   
-
+dotenv.config();  
 //route
 const bookRoutes = require('./routes/books');
 const userRoutes = require('./routes/users');

@@ -9,11 +9,21 @@ router
             res.status(200).json(results)
         })
     })
-    // .post('/', (req, res, next) => {
-    //     res.status(200).json({
-    //         message: 'works'
-    //     })
-    // });
+    .post('/', (req, res, next) => {
+            const book = {
+                bookdid: req.body.bookid ,
+                userid: +req.body.userid,
+              
+            };
+
+            Connection.query('INSERT INTO borrows(userid, bookid) VALUES(?,?)', [ req.body.userid, req.body.bookid], (err, results, fields) =>{
+                if(err) throw err.message;
+
+                res.status(200);
+            })
+            //console.log(book)
+        })
+ 
 
 router
     .get('/:id', (req, res, next) => {
@@ -25,9 +35,7 @@ router
         })
          
     })
-    // .post('/:id', (req, res, next) => {
-
-    // })
+    
     // .delete('/:id', (req, res, next) => {
 
     // })
