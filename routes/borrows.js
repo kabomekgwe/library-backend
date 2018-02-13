@@ -20,12 +20,12 @@ router
         });
 
 router  
-    .get('/:userid', (req, res, next) => {
+    .get('/:userid/:answer', (req, res, next) => {
        
     Connection.query('select books.title, books.subtitle, books.author from borrows ' + 
       '  inner join books on books.id = borrows.bookid  ' +
-      '  JOIN  users on users.id = ? where borrows.returned = "No" '
-    ,[req.params.userid], (err, results, fields) => {
+      '  JOIN  users on users.id = ? where borrows.returned = ? '
+    ,[req.params.userid, req.params.answer], (err, results, fields) => {
         if(err) throw err.message;
         res.status(200).json(results)
     })
