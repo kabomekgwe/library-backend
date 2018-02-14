@@ -19,13 +19,11 @@
     "express": "^4.16.2",
     "express-validator": "^4.3.0",
     "jsonwebtoken": "^8.1.1",
-    "knex": "*",
+    
     "lodash": "^4.17.5",
     "morgan": "^1.9.0",
-    "mysql": "^2.15.0",
-    "passport": "^0.4.0",
-    "passport-jwt": "^3.0.1",
-    "passport-local": "^1.0.0"
+    "mysql": "^2.15.0"
+  
   },
   "devDependencies": {
     "nodemon": "^1.14.12"
