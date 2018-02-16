@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Connection = require('../db');
+const connection = require('../db');
 const bcrypt = require('bcrypt');
 
 const lodash = require('lodash');
@@ -13,7 +13,7 @@ const secretKey = require('crypto').randomBytes(256).toString('hex');
 
 
 function getUserDB(email, done) {
-    Connection.query('SELECT * FROM users WHERE email = ? LIMIT 1', [email], function (err, rows, fields) {
+    connection.query('SELECT * FROM users WHERE email = ? LIMIT 1', [email], function (err, rows, fields) {
         if (err) throw err;
         done(rows[0]);
     });
@@ -24,7 +24,7 @@ router.post('/login', (req, res, next) => {
     if ( !req.body.password  || !req.body.email ) {
         return res.status(400).send("You must send the username and the password");
     }else
-        Connection.query('SELECT email,name,id , password from users WHERE email = ?  LIMIT 1 ', [email], (err, results, fields) => {
+        connection.query('SELECT email,name,id , password from users WHERE email = ?  LIMIT 1 ', [email], (err, results, fields) => {
             if (results.length > 0) {
                 const passwordCompare = bcrypt.compareSync(password, results[0].password);
                 if (passwordCompare) {
@@ -50,7 +50,7 @@ router.post('/register', (req, res, next) => {
                     email: req.body.email,
                     password: hash
                 };
-                Connection.query('INSERT INTO users (name,surname,email,password)  values(?,?,?,?) ;'
+                connection.query('INSERT INTO users (name,surname,email,password)  values(?,?,?,?) ;'
                     , [user.name, user.surname, user.email, user.password], (err, results, fields) => {
                         res.status(200).json({ id: results.insertId, user: user.name});
                     });

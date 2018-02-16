@@ -14,7 +14,7 @@ const borrowrRoutes = require('./routes/borrows');
 const Connection = require('./db');
 
 app.use( (req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Headers", 
     "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials, Allow-File-Access-From-Files");
     res.setHeader('Access-Control-Allow-Methods', "*");
