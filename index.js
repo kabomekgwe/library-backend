@@ -3,7 +3,6 @@ const express = require('express'),
       cors  =   require('cors'),
       dotenv    = require('dotenv');
       morgan = require('morgan');
-      const expressValidator = require('express-validator');
 //instantiation
 const app = express();   
 dotenv.config();  
@@ -28,13 +27,19 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
 app.use(morgan('dev'));
-app.use(expressValidator());
  //cors
 
 app.use('/books', bookRoutes);
 app.use('/user', userRoutes);
 app.use('/borrow', borrowrRoutes);
 
+app.use(function (err, req, res, next) {
+//console.error(err.stack);    
+    res.status(500).send('Something broke!')
+  });
+
+
 const port = 3000;
 app.listen( process.env.PORT || port);
 console.log(`running on port ${port}`);
+module.exports = app;

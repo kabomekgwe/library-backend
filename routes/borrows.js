@@ -47,7 +47,7 @@ router
 
 router.patch('/', (req, res, next) => {
     connection.query("UPDATE borrows SET returned = 'yes' where userid = ? AND bookid = ?",
-        [+req.body.userid, req.body.bookid], (err, results, fields) => {
+        [req.body.userid, req.body.bookid], (err, results, fields) => {
             if (err) throw err.message;
             res.status(200).json(results)
             console.log(req.body);
